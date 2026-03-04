@@ -1,0 +1,1 @@
+"""CloudWatch service plugin."""

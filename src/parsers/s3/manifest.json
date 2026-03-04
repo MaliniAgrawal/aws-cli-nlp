@@ -1,0 +1,21 @@
+{
+  "service": "s3",
+  "version": "0.1.0",
+  "summary": "S3 command generator (create/list/delete objects and buckets)",
+  "intents": [
+    "create_s3_bucket",
+    "list_s3_buckets",
+    "delete_s3_bucket",
+    "list_s3_objects",
+    "put_s3_object"
+  ],
+  "examples": [
+    "create an S3 bucket named my-bucket in us-west-1",
+    "list s3 buckets",
+    "delete s3 bucket my-bucket",
+    "list objects in s3 bucket my-bucket",
+    "upload file test.png to s3 bucket my-bucket key images/test.png"
+  ],
+  "author": "You",
+  "stable": true
+}

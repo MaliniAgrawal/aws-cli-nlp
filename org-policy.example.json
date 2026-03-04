@@ -1,0 +1,26 @@
+{
+  "$schema": "https://example.com/org-policy-schema.json",
+  "version": "1.0",
+  "enabled": false,
+  "comment": "This is an EXAMPLE org-policy configuration for Pro Edition features. Free Edition does not use this file.",
+  
+  "policies": {
+    "execution": {
+      "allow_destructive": false,
+      "require_approval": true,
+      "blocked_services": [],
+      "allowed_services": ["s3", "ec2", "lambda","iam"]
+    },
+    "safety": {
+      "min_safety_level": "SAFE",
+      "block_security_sensitive": false
+    },
+    "confirmation": {
+      "destructive_phrase": "YES, DELETE",
+      "security_phrase": "YES, MODIFY IAM",
+      "mutating_phrase": "YES, APPLY"
+    }
+  },
+  
+  "note": "To use org-policy features, you need Pro Edition. See MARKETPLACE_README.md for details."
+}
