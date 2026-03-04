@@ -1,0 +1,99 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv-mcp-whisper/
+venv-test/
+.venv/
+venv/
+ENV/
+env/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# AWS and credentials
+*.pem
+.aws/
+aws_credentials
+credentials
+*.key
+
+# Local data and logs
+*.log
+*.sqlite3
+temp4del/
+*.tmp
+
+# Jupyter
+.ipynb_checkpoints
+
+# Others
+Pipfile.lock
+.mypy_cache/
+venv/
+__pycache__/
+.DS_Store
+venv/
+__pycache__/
+.DS_Store
+# Python virtual environments
+venv/
+ENV/
+.env
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Ubuntu/Linux system files
+.DS_Store
+.directory
+.nfs*
+
