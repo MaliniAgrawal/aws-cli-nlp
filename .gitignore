@@ -24,12 +24,12 @@ var/
 *.egg
 
 # Virtual environments
-venv-mcp-whisper/
+venv/
 venv-test/
 .venv/
-venv/
 ENV/
 env/
+.env
 
 # Installer logs
 pip-log.txt
@@ -56,6 +56,8 @@ coverage.xml
 
 # OS files
 .DS_Store
+.directory
+.nfs*
 Thumbs.db
 
 # AWS and credentials
@@ -77,23 +79,7 @@ temp4del/
 # Others
 Pipfile.lock
 .mypy_cache/
-venv/
-__pycache__/
-.DS_Store
-venv/
-__pycache__/
-.DS_Store
-# Python virtual environments
-venv/
-ENV/
-.env
+.pyre/
+.pytype/    
 
-# Python bytecode
-__pycache__/
-*.py[cod]
-
-# Ubuntu/Linux system files
-.DS_Store
-.directory
-.nfs*
 
