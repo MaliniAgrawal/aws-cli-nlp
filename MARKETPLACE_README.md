@@ -212,17 +212,33 @@ python src/mcp_server.py
 
 Add to your MCP client config (e.g., Claude Desktop):
 
+**Linux/macOS:**
 ```json
 {
   "mcpServers": {
     "aws-cli-assistant": {
       "command": "python",
-      "args": ["C:/path/to/phase-a/src/mcp_server.py"],
+      "args": ["/home/user/aws-cli-nlp/src/mcp_server.py"],
       "env": {}
     }
   }
 }
 ```
+
+**Windows:**
+```json
+{
+  "mcpServers": {
+    "aws-cli-assistant": {
+      "command": "python",
+      "args": ["C:\\Users\\user\\aws-cli-nlp\\src\\mcp_server.py"],
+      "env": {}
+    }
+  }
+}
+```
+
+> Replace `/home/user` (Linux/macOS) or `C:\Users\user` (Windows) with your actual home directory and `aws-cli-nlp` with your project path.
 
 ### Available MCP Tools
 
