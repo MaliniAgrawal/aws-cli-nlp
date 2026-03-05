@@ -15,8 +15,8 @@ Prerequisites: Python 3.8+, AWS CLI v2, `aws configure` completed.
 Install (GitHub release distribution):
 
 ```bash
-git clone <https://github.com/MaliniAgrawal/phase-a.git>
-cd phase-a
+git clone <https://github.com/MaliniAgrawal/aws-cli-nlp.git>
+cd aws-cli-nlp
 ```
 
 Run:
@@ -124,14 +124,17 @@ $ aws-nlp "delete production database" --ci
 
 ```bash
 # Clone repository
-git clone <https://github.com/MaliniAgrawal/phase-a.git>
-cd phase-a
+git clone <https://github.com/MaliniAgrawal/aws-cli-nlp.git>
+cd aws-cli-nlp
 
 # Create virtual environment
-python -m venv venv-phase-a
-source venv-phase-a/bin/activate  # Linux/Mac
-# or
-venv-phase-a\Scripts\Activate.ps1  # Windows
+python -m venv venv
+
+# Linux/macOS
+source venv/bin/activate
+
+# Windows
+venv\Scripts\Activate.ps1
 
 # Install dependencies
 pip install -r requirements.txt
@@ -238,7 +241,7 @@ Add to your MCP client config (e.g., Claude Desktop):
 }
 ```
 
-> Replace `/home/user` (Linux/macOS) or `C:\Users\user` (Windows) with your actual home directory and `aws-cli-nlp` with your project path.
+> Replace `/home/user` (Linux/macOS) or `C:\Users\user` (Windows) with your actual home directory.
 
 ### Available MCP Tools
 
@@ -304,19 +307,20 @@ python scripts/add_service_template.py --name <service> --intents <intent1> <int
 ## Architecture
 
 ```
-phase-a/
+aws-cli-nlp/
 ├── src/
-│   ├── core/
-│   │   ├── aws_parsers/          # Service-specific parsers
-│   │   ├── command_generator.py  # Core generation logic
+│   ├── core/                     # Core functionality
+│   │   ├── command_generator.py  # Generation logic
 │   │   ├── registry.py           # Service autodiscovery
 │   │   ├── nlp_utils.py          # Intent classification
 │   │   ├── aws_validator.py      # Safety classification
 │   │   └── history.py            # Audit trail
+│   ├── parsers/                  # Service-specific parsers
 │   ├── aws_nlp.py                # CLI interface
 │   └── mcp_server.py             # MCP server (non-executing)
-├── scripts/
-│   └── add_service_template.py   # Service generator
+├── scripts/                      # Helper scripts and tests
+├── marketplace/                  # Marketplace packaging
+├── docs/                         # Documentation
 └── tests/                        # Test suite
 ```
 
