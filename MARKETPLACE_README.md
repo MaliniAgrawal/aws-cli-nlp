@@ -8,6 +8,24 @@
 
 AWS CLI Safety Assistant transforms natural language into AWS CLI commands with built-in safety guardrails. This Free Edition provides local CLI execution with mandatory human-in-the-loop confirmation for all risky operations.
 
+
+
+
+Home
+1
+
+DMs
+2
+
+Activity
+3
+
+Files
+4
+
+More
+0
+
 ## Install (Free v1)
 
 Prerequisites: Python 3.8+, AWS CLI v2, `aws configure` completed.

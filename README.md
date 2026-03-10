@@ -9,6 +9,20 @@ Generate AWS CLI commands from natural language with built-in safety controls.
 - Human-in-the-loop execution  
 - Policy enforcement for destructive commands  
 
+## Architecture
+
+```
+User
+  ↓
+Natural Language
+  ↓
+aws-cli-nlp
+  ↓
+Safety Engine
+  ↓
+Generated AWS CLI
+```
+
 ## Overview
 
 This project provides an intelligent AWS CLI command generator that uses natural language processing to:
