@@ -230,7 +230,7 @@ Examples:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Simulate execution without running (use with --execute)"
+        help="Show what would be executed without running the command"
     )
 
     parser.add_argument(
@@ -452,6 +452,46 @@ Examples:
             # History recording must never break CLI
             pass
     
+    # DRY RUN MODE: Show command + impact preview, no execution, no prompt
+    if args.dry_run:
+        from src.core.cli_formatter import Colors, _get_color
+        
+        command = result.get("command", "")
+        intent = result.get("intent", "")
+        safety_level = result.get("safety", {}).get("level", "UNKNOWN")
+        
+        # Color setup
+        bold = _get_color(Colors.BOLD, args.no_color)
+        cyan = _get_color(Colors.CYAN, args.no_color)
+        reset = _get_color(Colors.RESET, args.no_color)
+        
+        # Safety level colors
+        if safety_level == "SAFE":
+            safety_color = _get_color(Colors.GREEN, args.no_color)
+        elif safety_level == "MUTATING":
+            safety_color = _get_color(Colors.YELLOW, args.no_color)
+        elif safety_level in ("DESTRUCTIVE", "SECURITY_SENSITIVE"):
+            safety_color = _get_color(Colors.RED, args.no_color)
+        else:
+            safety_color = _get_color(Colors.GRAY, args.no_color)
+        
+        print(f"{bold}Command:{reset}")
+        print(f"  {cyan}{command}{reset}")
+        print(f"\n{bold}Safety:{reset}")
+        print(f"  {safety_color}{safety_level}{reset}")
+        
+        # Impact Preview for destructive operations
+        if safety_level in ("DESTRUCTIVE", "SECURITY_SENSITIVE", "MUTATING"):
+            impact_items = _get_impact_preview(command, intent)
+            if impact_items:
+                print(f"\n{bold}Impact Preview:{reset}")
+                for item in impact_items:
+                    print(f"  • {item}")
+        
+        print(f"\n{bold}Status:{reset}")
+        print("  DRY RUN – command not executed")
+        return
+    
     # Handle execution if requested
     if args.execute:
         from src.core.executor import execute_with_confirmation, ExecutionPolicy
@@ -468,34 +508,12 @@ Examples:
         execution_policy = policy_map[args.policy]
 
         # Respect --no-prompt: block interactive execution in scripted/non-interactive use
-        if args.no_prompt and not args.dry_run:
+        if args.no_prompt:
             print("\n[!] --no-prompt blocks interactive execution. Run without --no-prompt or remove --execute.")
             sys.exit(2)
 
         # Check if confirmation needed
         safety_level = result.get("safety", {}).get("level", "UNKNOWN")
-        
-        # DRY RUN MODE: Show command + impact preview, no execution, no prompt
-        if args.dry_run:
-            command = result.get("command", "")
-            intent = result.get("intent", "")
-            
-            print("Command:")
-            print(f"  {command}")
-            print("\nSafety:")
-            print(f"  {safety_level}")
-            
-            # Impact Preview for destructive operations
-            if safety_level in ("DESTRUCTIVE", "SECURITY_SENSITIVE", "MUTATING"):
-                impact_items = _get_impact_preview(command, intent)
-                if impact_items:
-                    print("\nImpact Preview:")
-                    for item in impact_items:
-                        print(f"  • {item}")
-            
-            print("\nStatus:")
-            print("  DRY RUN – command not executed")
-            return
         
         # Display the generated command first (human mode only)
         if args.format in (None, "human"):
