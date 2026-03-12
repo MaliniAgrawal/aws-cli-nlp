@@ -20,6 +20,47 @@ from src.core.command_generator import generate_command_sync
 from src.core.cli_formatter import format_human, format_json, format_explain_only, format_agent
 from src.core.registry import registry
 
+# Impact descriptions for common operations
+IMPACT_DESCRIPTIONS = {
+    "delete_s3_bucket": [
+        "This will permanently delete the S3 bucket",
+        "All objects in the bucket will be removed",
+        "This action cannot be undone"
+    ],
+    "terminate_instance": [
+        "This will terminate the specified instance(s)",
+        "Data on instance stores will be lost",
+        "This action cannot be undone"
+    ],
+    "delete_iam": [
+        "This will modify IAM permissions",
+        "Changes may affect access control",
+        "Review security implications carefully"
+    ],
+    "create_iam_user": [
+        "Creates a new IAM user",
+        "User initially has no permissions",
+        "Policies can be attached later"
+    ]
+}
+
+def _get_impact_preview(command: str, intent: str) -> list:
+    """Get impact preview based on command and intent."""
+    command_lower = command.lower()
+    intent_lower = intent.lower()
+    
+    # Match against known patterns
+    if "delete" in intent_lower and "s3" in command_lower:
+        return IMPACT_DESCRIPTIONS.get("delete_s3_bucket", [])
+    elif "terminate" in command_lower or "terminate" in intent_lower:
+        return IMPACT_DESCRIPTIONS.get("terminate_instance", [])
+    elif "iam" in command_lower and ("delete" in command_lower or "remove" in command_lower):
+        return IMPACT_DESCRIPTIONS.get("delete_iam", [])
+    elif "iam" in command_lower and "create" in intent_lower and "user" in intent_lower:
+        return IMPACT_DESCRIPTIONS.get("create_iam_user", [])
+    
+    return []
+
 def _print_execute_hint(query: str) -> None:
     print("\nTo execute this command, rerun with --execute:")
     print(f'  python aws-nlp.py "{query}" --execute')
@@ -427,29 +468,50 @@ Examples:
         execution_policy = policy_map[args.policy]
 
         # Respect --no-prompt: block interactive execution in scripted/non-interactive use
-        if args.no_prompt:
+        if args.no_prompt and not args.dry_run:
             print("\n[!] --no-prompt blocks interactive execution. Run without --no-prompt or remove --execute.")
             sys.exit(2)
 
+        # Check if confirmation needed
+        safety_level = result.get("safety", {}).get("level", "UNKNOWN")
+        
+        # DRY RUN MODE: Show command + impact preview, no execution, no prompt
+        if args.dry_run:
+            command = result.get("command", "")
+            intent = result.get("intent", "")
+            
+            print("Command:")
+            print(f"  {command}")
+            print("\nSafety:")
+            print(f"  {safety_level}")
+            
+            # Impact Preview for destructive operations
+            if safety_level in ("DESTRUCTIVE", "SECURITY_SENSITIVE", "MUTATING"):
+                impact_items = _get_impact_preview(command, intent)
+                if impact_items:
+                    print("\nImpact Preview:")
+                    for item in impact_items:
+                        print(f"  • {item}")
+            
+            print("\nStatus:")
+            print("  DRY RUN – command not executed")
+            return
+        
         # Display the generated command first (human mode only)
         if args.format in (None, "human"):
             print(format_human(result, args.no_color))
         
-        # Check if confirmation needed
-        safety_level = result.get("safety", {}).get("level", "UNKNOWN")
-        
         # Phase B.3.2: Explicit confirmation for destructive/mutating/security-sensitive operations
-        if not args.dry_run:
-            confirmed = confirm_destructive_action(safety_level, result)
-            if not confirmed:
-                print("\n[x] Operation cancelled by user.")
-                sys.exit(1)
+        confirmed = confirm_destructive_action(safety_level, result)
+        if not confirmed:
+            print("\n[x] Operation cancelled by user.")
+            sys.exit(1)
         
         # Execute with policy
         result = execute_with_confirmation(
             generated_response=result,
             policy=execution_policy,
-            dry_run=args.dry_run
+            dry_run=False
         )
         
         # Show execution result
