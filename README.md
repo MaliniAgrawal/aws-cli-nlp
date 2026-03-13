@@ -31,6 +31,19 @@ This project provides an intelligent AWS CLI command generator that uses natural
 - Enforce organizational policies
 - Support both CLI and Model Context Protocol (MCP) integration
 
+## Video Demo
+
+[![AWS CLI NLP Demo](https://img.youtube.com/vi/sgyaWskNRTQ/0.jpg)](https://www.youtube.com/watch?v=sgyaWskNRTQ)
+
+### Key Highlights in the Demo:
+* **[00:00:48] Terminal Mode:** Converting plain English into valid AWS CLI commands.
+* **[00:01:30] Safety Labels:** See how "Safe" vs "Mutating" operations are classified.
+* **[00:02:45] Destructive Protection:** Multi-step verification for deleting resources.
+* **[00:04:42] MCP Integration:** Using the tool as a server for AI Desktop clients.
+* **[00:06:48] Dry Run Mode:** Validating logic without executing any actual cloud changes.
+
+---
+
 **Key Components:**
 - `src/` : core code, parsers for AWS services, config and utilities
 - `scripts/` : helper scripts and tests
