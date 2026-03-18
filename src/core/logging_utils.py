@@ -1,11 +1,12 @@
 import os
 import sys
 from pathlib import Path
+
 from loguru import logger
 
 
 def setup_logger(app_name: str):
-    """
+    r"""
     Safe, cross-platform log directory:
     - Windows: %LOCALAPPDATA%\<app_name>\telemetry\telemetry.log
     - Linux/macOS: ~/.local/share/<app_name>/telemetry/telemetry.log

@@ -3,9 +3,11 @@
 import json
 from pathlib import Path
 from typing import Optional
+
 from .policy_schema import OrgPolicy
 
 DEFAULT_POLICY_PATH = Path("org-policy.json")
+
 
 def load_org_policy(path: Path = DEFAULT_POLICY_PATH) -> Optional[OrgPolicy]:
     if not path.exists():

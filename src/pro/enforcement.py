@@ -1,12 +1,11 @@
 # src/pro/enforcement.py
 
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
 from .policy_schema import OrgPolicy
 
-def evaluate_policy(
-    policy: Optional[OrgPolicy],
-    safety_level: str
-) -> Dict[str, Any]:
+
+def evaluate_policy(policy: Optional[OrgPolicy], safety_level: str) -> Dict[str, Any]:
     """
     Returns enforcement recommendation.
     Does NOT block or execute.
@@ -16,7 +15,7 @@ def evaluate_policy(
         return {
             "enabled": False,
             "decision": "allow",
-            "reason": "No org policy present"
+            "reason": "No org policy present",
         }
 
     for rule in policy.get("rules", []):
@@ -24,11 +23,7 @@ def evaluate_policy(
             return {
                 "enabled": True,
                 "decision": rule.get("decision", "allow"),
-                "reason": rule.get("message", "Policy rule matched")
+                "reason": rule.get("message", "Policy rule matched"),
             }
 
-    return {
-        "enabled": True,
-        "decision": "allow",
-        "reason": "No matching rule"
-    }
+    return {"enabled": True, "decision": "allow", "reason": "No matching rule"}

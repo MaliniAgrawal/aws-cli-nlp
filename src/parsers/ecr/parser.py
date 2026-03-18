@@ -1,6 +1,7 @@
 SERVICE_NAME = "ecr"
 INTENTS = ["list_ecr_repositories", "create_ecr_repository"]
 
+
 def generate_command(intent, entities):
     region = entities.get("region")
 
@@ -17,10 +18,20 @@ def generate_command(intent, entities):
             cmd += f" --region {region}"
         return {"command": cmd, "explanation": "Creates an ECR repo."}
 
-    return {"command": "echo 'Unsupported ECR intent'", "explanation": "Unsupported intent."}
+    return {
+        "command": "echo 'Unsupported ECR intent'",
+        "explanation": "Unsupported intent.",
+    }
+
 
 def validate(intent, entities, aws_session=None):
     return {"status": "valid"}
 
+
 def get_service():
-    return {"name": SERVICE_NAME, "intents": INTENTS, "generate_command": generate_command, "validate": validate}
+    return {
+        "name": SERVICE_NAME,
+        "intents": INTENTS,
+        "generate_command": generate_command,
+        "validate": validate,
+    }

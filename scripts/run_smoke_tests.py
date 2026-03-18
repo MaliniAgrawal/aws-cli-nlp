@@ -1,14 +1,18 @@
 """
 Run a small smoke test using your local registry and command generator.
 """
-import os, sys, asyncio
+
+import asyncio
+import os
+import sys
+
 # Add the project root to Python path
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(script_dir)  # Go up one level from scripts/ to phase-a/
 sys.path.insert(0, project_root)
 
-from src.core.command_generator import generate_command_sync
 from src.core import nlp_utils
+from src.core.command_generator import generate_command_sync
 from src.core.registry import registry
 
 QUERIES = [
@@ -29,6 +33,7 @@ QUERIES = [
     "list policies for user DevUser",
 ]
 
+
 def run_smoke():
     print("\n=== SMOKE TEST ===\n")
     # Ensure registry is initialized
@@ -42,22 +47,24 @@ def run_smoke():
         print("-" * 60)
     print("\nDone.\n")
 
+
 # quick ad-hoc checks
 def test_s3_parser_direct():
     try:
         from importlib import import_module
+
         m = import_module("src.parsers.s3.parser")
         print("SERVICE:", m.SERVICE)
-        
+
         # Test S3 queries using generate_command_sync
         s3_queries = [
             "create an S3 bucket named test-bucket in us-west-1",
             "list s3 buckets",
             "delete s3 bucket old-bucket",
             "list objects in bucket my-bucket",
-            "upload file test.txt to s3 bucket my-bucket key files/test.txt"
+            "upload file test.txt to s3 bucket my-bucket key files/test.txt",
         ]
-        
+
         for query in s3_queries:
             result = generate_command_sync(query)
             print(f"{query} -> {result['command']}")
@@ -65,25 +72,28 @@ def test_s3_parser_direct():
         print(f"S3 parser test failed: {e}")
         print("Make sure S3 parser is properly configured for autodiscovery")
 
+
 def test_ec2_parser_direct():
     try:
         from importlib import import_module
+
         m = import_module("src.parsers.ec2.parser")
         print("SERVICE:", m.SERVICE_NAME)
-        
+
         # Test EC2 queries
         ec2_queries = [
             "list ec2 instances in us-west-1",
             "describe ec2 instances",
-            "list ec2 instances in us-east-1"
+            "list ec2 instances in us-east-1",
         ]
-        
+
         for query in ec2_queries:
             result = generate_command_sync(query)
             print(f"{query} -> {result['command']}")
     except Exception as e:
         print(f"EC2 parser test failed: {e}")
         print("Make sure EC2 parser is properly configured for autodiscovery")
+
 
 if __name__ == "__main__":
     run_smoke()

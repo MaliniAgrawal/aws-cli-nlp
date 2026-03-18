@@ -1,9 +1,14 @@
 import sys
+
 from src import aws_nlp
 
 
 def test_non_execute_shows_instruction(monkeypatch, capsys):
-    fake_result = {"command": "echo hi", "safety": {"level": "SAFE"}, "intent": "say-hi"}
+    fake_result = {
+        "command": "echo hi",
+        "safety": {"level": "SAFE"},
+        "intent": "say-hi",
+    }
     monkeypatch.setattr(aws_nlp, "generate_command_sync", lambda q: fake_result)
     monkeypatch.setattr(sys, "argv", ["aws-nlp", "list s3 buckets"])
     try:
@@ -16,7 +21,11 @@ def test_non_execute_shows_instruction(monkeypatch, capsys):
 
 
 def test_non_execute_json_no_instruction(monkeypatch, capsys):
-    fake_result = {"command": "echo hi", "safety": {"level": "SAFE"}, "intent": "say-hi"}
+    fake_result = {
+        "command": "echo hi",
+        "safety": {"level": "SAFE"},
+        "intent": "say-hi",
+    }
     monkeypatch.setattr(aws_nlp, "generate_command_sync", lambda q: fake_result)
     monkeypatch.setattr(sys, "argv", ["aws-nlp", "--json", "list s3 buckets"])
     try:

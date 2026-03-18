@@ -7,10 +7,8 @@ Interface expected by registry:
 """
 
 import re
-import json
-import os
-from pathlib import Path
-from typing import Tuple, Dict, Any
+from pathlib import Path  # noqa: F401
+from typing import Any, Dict, Tuple  # noqa: F401
 
 SERVICE_NAME = "ec2"
 
@@ -29,8 +27,12 @@ INTENTS = [
 # --- Helpers: light-weight rule extraction -----------------------------------
 _REGION_RE = re.compile(r"\b([a-z]{2}-[a-z]+-\d)\b", re.I)
 _INSTANCE_ID_RE = re.compile(r"\b(i-[0-9a-f]{8,17})\b", re.I)
-_KEY_NAME_RE_1 = re.compile(r"(?:keypair|key pair|key-pair)\s+named?\s+([A-Za-z0-9_\-\.]+)", re.I)
-_KEY_NAME_RE_2 = re.compile(r"(?:keypair|key pair|key-pair)\s+([A-Za-z0-9_\-\.]+)", re.I)
+_KEY_NAME_RE_1 = re.compile(
+    r"(?:keypair|key pair|key-pair)\s+named?\s+([A-Za-z0-9_\-\.]+)", re.I
+)
+_KEY_NAME_RE_2 = re.compile(
+    r"(?:keypair|key pair|key-pair)\s+([A-Za-z0-9_\-\.]+)", re.I
+)
 
 
 def _extract_region(text: str) -> str | None:
@@ -90,13 +92,17 @@ def start_ec2_instance_handler(_args: dict, text: str) -> dict:
             "entities": {},
             "validation": {"status": "unknown", "reason": "missing_instance_id"},
         }
-    cmd = f"aws ec2 start-instances --instance-ids {' '.join(ids)}" + _make_region_flag(region)
+    cmd = f"aws ec2 start-instances --instance-ids {' '.join(ids)}" + _make_region_flag(
+        region
+    )
     return {
         "command": cmd,
         "explanation": f"Starts EC2 instance(s) {', '.join(ids)}{(' in ' + region) if region else ''}.",
         "intent": "start_ec2_instance",
         "entities": {"instance_ids": ids, "region": region},
-        "validation": _safe_validation_stub("start_ec2_instance", {"instance_ids": ids, "region": region}),
+        "validation": _safe_validation_stub(
+            "start_ec2_instance", {"instance_ids": ids, "region": region}
+        ),
     }
 
 
@@ -111,13 +117,17 @@ def stop_ec2_instance_handler(_args: dict, text: str) -> dict:
             "entities": {},
             "validation": {"status": "unknown", "reason": "missing_instance_id"},
         }
-    cmd = f"aws ec2 stop-instances --instance-ids {' '.join(ids)}" + _make_region_flag(region)
+    cmd = f"aws ec2 stop-instances --instance-ids {' '.join(ids)}" + _make_region_flag(
+        region
+    )
     return {
         "command": cmd,
         "explanation": f"Stops EC2 instance(s) {', '.join(ids)}{(' in ' + region) if region else ''}.",
         "intent": "stop_ec2_instance",
         "entities": {"instance_ids": ids, "region": region},
-        "validation": _safe_validation_stub("stop_ec2_instance", {"instance_ids": ids, "region": region}),
+        "validation": _safe_validation_stub(
+            "stop_ec2_instance", {"instance_ids": ids, "region": region}
+        ),
     }
 
 
@@ -132,13 +142,18 @@ def terminate_ec2_instance_handler(_args: dict, text: str) -> dict:
             "entities": {},
             "validation": {"status": "unknown", "reason": "missing_instance_id"},
         }
-    cmd = f"aws ec2 terminate-instances --instance-ids {' '.join(ids)}" + _make_region_flag(region)
+    cmd = (
+        f"aws ec2 terminate-instances --instance-ids {' '.join(ids)}"
+        + _make_region_flag(region)
+    )
     return {
         "command": cmd,
         "explanation": f"Terminates EC2 instance(s) {', '.join(ids)}{(' in ' + region) if region else ''}.",
         "intent": "terminate_ec2_instance",
         "entities": {"instance_ids": ids, "region": region},
-        "validation": _safe_validation_stub("terminate_ec2_instance", {"instance_ids": ids, "region": region}),
+        "validation": _safe_validation_stub(
+            "terminate_ec2_instance", {"instance_ids": ids, "region": region}
+        ),
     }
 
 
@@ -150,16 +165,16 @@ def describe_instance_types_handler(_args: dict, text: str) -> dict:
         "explanation": f"Lists EC2 instance types{(' in ' + region) if region else ''}.",
         "intent": "describe_instance_types",
         "entities": {"region": region} if region else {},
-        "validation": _safe_validation_stub("describe_instance_types", {"region": region}),
+        "validation": _safe_validation_stub(
+            "describe_instance_types", {"region": region}
+        ),
     }
 
 
 def create_ec2_keypair_handler(_args: dict, text: str) -> dict:
     key = _extract_key_name(text) or "my-key"
     # Create keypair command writes key material to stdout; redirect to a file in examples.
-    cmd = (
-        f"aws ec2 create-key-pair --key-name {key} --query 'KeyMaterial' --output text > {key}.pem"
-    )
+    cmd = f"aws ec2 create-key-pair --key-name {key} --query 'KeyMaterial' --output text > {key}.pem"
     return {
         "command": cmd,
         "explanation": f"Creates an EC2 key pair named '{key}' and saves the PEM to {key}.pem.",
@@ -192,6 +207,7 @@ INTENT_HANDLERS = {
     "list_ec2_keypairs": list_ec2_keypairs_handler,
 }
 
+
 def generate_command(intent, entities):
     """Registry-compatible command generator interface."""
     if intent in INTENT_HANDLERS:
@@ -204,14 +220,19 @@ def generate_command(intent, entities):
             text += f" {' '.join(entities['instance_ids'])}"
         if entities.get("key_name"):
             text += f" {entities['key_name']}"
-        
+
         result = handler(entities, text)
         return {"command": result["command"], "explanation": result["explanation"]}
-    return {"command": "echo 'Unknown EC2 intent'", "explanation": "Intent not supported"}
+    return {
+        "command": "echo 'Unknown EC2 intent'",
+        "explanation": "Intent not supported",
+    }
+
 
 def validate(intent, entities, aws_session=None):
     """Registry-compatible validation interface."""
     return _safe_validation_stub(intent, entities)
+
 
 # --- Registry / plugin interface --------------------------------------------
 def get_service() -> dict:
@@ -229,5 +250,5 @@ def get_service() -> dict:
         "name": SERVICE_NAME,
         "intents": INTENTS,
         "generate_command": generate_command,
-        "validate": validate
+        "validate": validate,
     }

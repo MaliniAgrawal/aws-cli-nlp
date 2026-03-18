@@ -14,6 +14,7 @@ import json
 import sys
 from pathlib import Path
 from pprint import pprint
+
 from loguru import logger
 
 # ──────────────────────────────────────────────
@@ -29,14 +30,13 @@ else:
     # Fallback: append so script still works if layout is different
     sys.path.append(str(SRC))
 
-# Import core modules from src
-from core.command_generator import generate_command
-from mcp_server import generate_aws_cli, list_supported_services, health_check
-
-
 # === Optional sanity checks for AWS creds ===
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
+
+# Import core modules from src
+from core.command_generator import generate_command
+from mcp_server import generate_aws_cli, health_check, list_supported_services
 
 
 async def run_tests():

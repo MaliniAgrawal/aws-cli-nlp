@@ -4,10 +4,10 @@ Local, append-only history recorder and reader for AWS NLP CLI.
 Phase C.1 (FINAL)
 """
 
+import datetime
 import json
 import os
-import datetime
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 HISTORY_DIR = os.path.join(os.path.expanduser("~"), ".aws-nlp")
 HISTORY_FILE = os.path.join(HISTORY_DIR, "history.jsonl")

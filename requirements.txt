@@ -1,28 +1,5 @@
-# Core MCP and server dependencies
 fastmcp>=0.1.0
 loguru>=0.7.0
-
-# Web interface dependencies
-fastapi>=0.104.0
-uvicorn>=0.24.0
-pydantic>=2.0.0
-
-# AWS SDK dependencies
 boto3>=1.34.0
 botocore>=1.34.0
-
-# Optional ML/NLP dependencies (for transformers-based intent classification)
-# Uncomment if using ML features
-# transformers>=4.35.0
-# torch>=2.0.0
-# tokenizers>=0.15.0
-
-# Development and tooling
-pytest>=7.4
-pytest-cov>=4.1
-black>=24.3
-isort>=5.12
-flake8>=6.1
-
-# CLI convenience
 pyperclip>=1.8.2

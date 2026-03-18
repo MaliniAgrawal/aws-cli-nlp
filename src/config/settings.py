@@ -1,5 +1,7 @@
 # src/config/settings.py
 import os
+
+
 class Settings:
     def __init__(self):
         self.use_ml = True
@@ -10,5 +12,6 @@ class Settings:
         self.model_id_small = "microsoft/DialoGPT-small"
         self.model_id_large = "microsoft/DialoGPT-large"
         self.aws_default_region = os.environ.get("AWS_REGION", "us-west-1")
+
 
 SETTINGS = Settings()

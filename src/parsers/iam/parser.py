@@ -1,6 +1,5 @@
 # src/parsers/iam/parser.py
 
-import re
 from typing import Dict
 
 SERVICE_NAME = "iam"
@@ -17,9 +16,7 @@ def _resolve_policy(policy: str) -> str:
         return policy
     if policy in AWS_MANAGED_POLICIES:
         return AWS_MANAGED_POLICIES[policy]
-    raise ValueError(
-        "Only AWS-managed policy names are supported without ARN"
-    )
+    raise ValueError("Only AWS-managed policy names are supported without ARN")
 
 
 def generate_command(intent: str, entities: Dict) -> Dict:

@@ -14,11 +14,12 @@ Notes:
 - Do NOT log secret values. Only log presence / failures.
 - For local dev use .env or set ANTHROPIC_API_KEY in the environment.
 """
+
 from __future__ import annotations
 
 import json
-import os
 import logging
+import os
 from typing import Optional
 
 _logger = logging.getLogger(__name__)
@@ -39,7 +40,9 @@ def _get_from_env(key: str) -> Optional[str]:
     return v
 
 
-def _get_from_aws(secret_name: str, key: Optional[str] = None, region: Optional[str] = None) -> Optional[str]:
+def _get_from_aws(
+    secret_name: str, key: Optional[str] = None, region: Optional[str] = None
+) -> Optional[str]:
     """Fetch a secret from AWS Secrets Manager.
 
     secret_name: the name or ARN of the secret stored in Secrets Manager.
@@ -51,7 +54,11 @@ def _get_from_aws(secret_name: str, key: Optional[str] = None, region: Optional[
         return None
 
     try:
-        client = boto3.client("secretsmanager", region_name=region) if region else boto3.client("secretsmanager")
+        client = (
+            boto3.client("secretsmanager", region_name=region)
+            if region
+            else boto3.client("secretsmanager")
+        )
         resp = client.get_secret_value(SecretId=secret_name)
         secret_string = resp.get("SecretString")
         if secret_string:
@@ -66,14 +73,24 @@ def _get_from_aws(secret_name: str, key: Optional[str] = None, region: Optional[
                 # Not JSON — return raw string (or None if key requested)
                 return secret_string if key is None else None
         # If secret stored as binary, return None (not handled here)
-        _logger.warning("Secret %s returned no SecretString; binary secrets not supported", secret_name)
+        _logger.warning(
+            "Secret %s returned no SecretString; binary secrets not supported",
+            secret_name,
+        )
         return None
     except ClientError as e:
-        _logger.warning("Unable to read secret %s from AWS Secrets Manager: %s", secret_name, e)
+        _logger.warning(
+            "Unable to read secret %s from AWS Secrets Manager: %s", secret_name, e
+        )
         return None
 
 
-def get_secret(key_name: str, *, aws_secret_name_env: str = "ANTHROPIC_SECRET_NAME", aws_region_env: str = "AWS_DEFAULT_REGION") -> Optional[str]:
+def get_secret(
+    key_name: str,
+    *,
+    aws_secret_name_env: str = "ANTHROPIC_SECRET_NAME",
+    aws_region_env: str = "AWS_DEFAULT_REGION",
+) -> Optional[str]:
     """Get a secret by key name.
 
     Order of lookup:

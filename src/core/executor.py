@@ -1,24 +1,17 @@
 # src/core/executor.py
 """
-Optional AWS CLI command execution with human authorization.
+Compatibility shim for src.core.execution_engine.
 
-Phase B.2 Guarantees:
-- AI suggests (command generation)
-- Human authorizes (explicit confirmation)
-- Policy blocks (safety enforcement)
-- Never executes without authorization
-"""
-import subprocess
-import shlex
-import json
-import os
-import datetime
-from typing import Dict, Any, Optional, Union
-"""Compatibility shim for src.core.execution_engine.
-
-`executor.py` is deprecated in favor of `execution_engine.py`. This module
-re-exports the implementation to preserve backwards compatibility for
-existing imports while encouraging the new name for clarity and scale.
+executor.py is the historical name. All implementation lives in
+execution_engine.py. This module re-exports everything so existing
+imports continue to work without change.
 """
 
-from .execution_engine import *  # re-export everything
+from .execution_engine import *  # noqa: F401, F403
+from .execution_engine import (
+    ExecutionPolicy,
+    ExecutionResult,
+    execute_with_confirmation,
+)
+
+__all__ = ["ExecutionPolicy", "ExecutionResult", "execute_with_confirmation"]

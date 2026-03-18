@@ -1,6 +1,7 @@
 # src/core/clipboard.py
 from typing import Tuple
 
+
 def copy_to_clipboard(text: str) -> Tuple[bool, str]:
     """
     Copies text to clipboard (best-effort).
@@ -8,6 +9,7 @@ def copy_to_clipboard(text: str) -> Tuple[bool, str]:
     """
     try:
         import pyperclip
+
         if not text:
             return False, "Nothing to copy (empty command)."
         pyperclip.copy(text)

@@ -2,11 +2,13 @@
 SERVICE_NAME = None
 INTENTS = []
 
+
 def generate_command(intent: str, entities: dict) -> dict:
     """
     Return { command: str, explanation: str }
     """
     raise NotImplementedError
+
 
 def validate(intent: str, entities: dict, aws_session=None) -> dict:
     """
@@ -15,10 +17,11 @@ def validate(intent: str, entities: dict, aws_session=None) -> dict:
     """
     return {"status": "unknown", "reason": "Validation not implemented", "extra": {}}
 
+
 def get_service():
     return {
         "name": SERVICE_NAME,
         "intents": INTENTS,
         "generate_command": generate_command,
-        "validate": validate
+        "validate": validate,
     }

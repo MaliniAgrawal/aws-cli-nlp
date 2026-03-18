@@ -1,9 +1,5 @@
 # tests/unit/test_ec2_parser.py
-import sys
-import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
-
-from parsers.ec2 import parser as ec2p
+from src.parsers.ec2 import parser as ec2p
 
 
 def test_list_instances_no_region():
@@ -20,11 +16,17 @@ def test_list_instances_with_region():
 
 def test_start_stop_terminate_instance_missing_id():
     res = ec2p.start_ec2_instance_handler({}, "start instance")
-    assert "Specify" in res["command"] or res["validation"]["reason"].startswith("missing")
+    assert "Specify" in res["command"] or res["validation"]["reason"].startswith(
+        "missing"
+    )
     res2 = ec2p.stop_ec2_instance_handler({}, "stop instance")
-    assert "Specify" in res2["command"] or res2["validation"]["reason"].startswith("missing")
+    assert "Specify" in res2["command"] or res2["validation"]["reason"].startswith(
+        "missing"
+    )
     res3 = ec2p.terminate_ec2_instance_handler({}, "terminate instance")
-    assert "Specify" in res3["command"] or res3["validation"]["reason"].startswith("missing")
+    assert "Specify" in res3["command"] or res3["validation"]["reason"].startswith(
+        "missing"
+    )
 
 
 def test_start_with_id_and_region():

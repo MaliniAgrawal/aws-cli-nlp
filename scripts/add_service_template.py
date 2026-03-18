@@ -2,7 +2,10 @@
 Add a new service scaffold to src/core/aws_parsers/
 usage: python scripts/add_service_template.py myservice
 """
-import sys, os
+
+import os
+import sys
+
 TEMPLATE = """SERVICE_NAME = "{service}"
 INTENTS = ["example_intent"]
 
