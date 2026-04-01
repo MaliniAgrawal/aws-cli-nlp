@@ -1,19 +1,42 @@
-# src/core/registry.py
 import importlib
+import inspect
 import logging
 import pkgutil
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
+
+from src.core.base_parser import BaseParser
 
 logger = logging.getLogger(__name__)
 
-PARSERS_PKG = "src.parsers"  # new plugin-based parsers package
+PARSERS_PKG = "src.parsers"
 
 
 class ServiceRegistry:
     def __init__(self):
         self.services: Dict[str, object] = {}
         self.intent_to_service: Dict[str, str] = {}
+
+    def _register_service(self, svc: dict, source: str):
+        service_name = svc.get("name")
+        intents = svc.get("intents", [])
+        if not service_name or not intents:
+            logger.warning("Skipping invalid plugin from %s", source)
+            return
+
+        self.services[service_name] = svc
+        for intent in intents:
+            self.intent_to_service[intent] = service_name
+        logger.info("Registered service plugin: %s (%s)", service_name, source)
+
+    def _load_class_based_service(self, mod, parser_module: str) -> bool:
+        for _, cls in inspect.getmembers(mod, inspect.isclass):
+            if cls is BaseParser or not issubclass(cls, BaseParser):
+                continue
+            parser = cls()
+            self._register_service(parser.to_service_dict(), parser_module)
+            return True
+        return False
 
     def autodiscover(self, package_name: str = PARSERS_PKG):
         """Dynamically discover and load service plugins from parsers directory."""
@@ -25,28 +48,27 @@ class ServiceRegistry:
             return
 
         package_path = Path(pkg.__file__).parent
-        # Look for service folders (each containing parser.py)
-        for finder, name, ispkg in pkgutil.iter_modules([str(package_path)]):
+        for _, name, ispkg in pkgutil.iter_modules([str(package_path)]):
             if name.startswith("_") or not ispkg:
-                continue  # Skip private modules and non-packages
+                continue
 
-            # Try to import the parser.py module from each service folder
             parser_module = f"{package_name}.{name}.parser"
             try:
                 mod = importlib.import_module(parser_module)
-                # each parser module must expose SERVICE_NAME and get_service() factory
+
+                # Preferred: class-based parser that inherits BaseParser.
+                if self._load_class_based_service(mod, parser_module):
+                    continue
+
+                # Backward compatibility: legacy module contract.
                 if hasattr(mod, "SERVICE_NAME") and hasattr(mod, "get_service"):
-                    svc = mod.get_service()
-                    self.services[svc["name"]] = svc
-                    # Build intent-to-service mapping
-                    for intent in svc["intents"]:
-                        self.intent_to_service[intent] = svc["name"]
-                    logger.info("Registered service plugin: %s", svc["name"])
+                    self._register_service(mod.get_service(), f"{parser_module} [legacy]")
                 else:
                     logger.debug(
-                        "Module %s missing SERVICE_NAME/get_service", parser_module
+                        "Module %s missing class-based parser and legacy SERVICE_NAME/get_service",
+                        parser_module,
                     )
-            except Exception:  # noqa: F841
+            except Exception:
                 logger.exception("Failed to load plugin %s", parser_module)
 
         logger.info("Total services registered: %d", len(self.services))
@@ -54,7 +76,7 @@ class ServiceRegistry:
     def get(self, service_name: str):
         return self.services.get(service_name)
 
-    def get_service_for_intent(self, intent: str):
+    def get_service_for_intent(self, intent: str) -> Optional[dict]:
         """Get service that handles the given intent."""
         service_name = self.intent_to_service.get(intent)
         if service_name:
@@ -65,5 +87,4 @@ class ServiceRegistry:
         return list(self.services.keys())
 
 
-# global singleton for convenience
 registry = ServiceRegistry()
