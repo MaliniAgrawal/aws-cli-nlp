@@ -50,7 +50,7 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: black --check
-        run: python -m black --check src/ tests/ aws-nlp.py conftest.py
+        run: python -m black --check --target-version py312 src/ tests/ aws-nlp.py conftest.py
 
       - name: isort --check-only
         run: python -m isort --check-only src/ tests/ aws-nlp.py conftest.py
