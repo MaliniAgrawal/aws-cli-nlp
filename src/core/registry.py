@@ -67,7 +67,10 @@ class ServiceRegistry:
                     )
                 else:
                     logger.debug(
-                        "Module %s missing class-based parser and legacy SERVICE_NAME/get_service",
+                        (
+                            "Module %s missing class-based parser and legacy "
+                            "SERVICE_NAME/get_service"
+                        ),
                         parser_module,
                     )
             except Exception:
