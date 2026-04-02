@@ -62,7 +62,9 @@ class ServiceRegistry:
 
                 # Backward compatibility: legacy module contract.
                 if hasattr(mod, "SERVICE_NAME") and hasattr(mod, "get_service"):
-                    self._register_service(mod.get_service(), f"{parser_module} [legacy]")
+                    self._register_service(
+                        mod.get_service(), f"{parser_module} [legacy]"
+                    )
                 else:
                     logger.debug(
                         "Module %s missing class-based parser and legacy SERVICE_NAME/get_service",
