@@ -2,6 +2,7 @@ import logging
 
 from src.core import nlp_utils
 from src.core.aws_validator import validate_command_safe
+from src.core.base_parser import BaseParser
 from src.core.registry import registry
 from src.core.response_schema import build_standard_response
 
@@ -160,7 +161,10 @@ def generate_command_sync(query: str, aws_session=None):
         )
 
     # call parser (stateless, deterministic)
-    result = svc["generate_command"](intent, entities)
+    if isinstance(svc, BaseParser):
+        result = svc.generate_command(intent, entities)
+    else:
+        result = svc["generate_command"](intent, entities)
 
     # Always run intent-based safety validation (no AWS calls)
     validation = validate_command_safe(intent, entities)
@@ -198,9 +202,13 @@ def list_supported_services():
 
     services_info = {}
     for service_name, service in registry.services.items():
+        if isinstance(service, BaseParser):
+            intents = service.get_intents()
+        else:
+            intents = service.get("intents", [])
         services_info[service_name] = {
-            "intents": service.get("intents", []),
-            "intent_count": len(service.get("intents", [])),
+            "intents": intents,
+            "intent_count": len(intents),
         }
 
     return {
