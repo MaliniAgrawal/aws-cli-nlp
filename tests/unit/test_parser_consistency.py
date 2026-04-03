@@ -78,9 +78,13 @@ def test_all_parser_generate_command_results_keep_command_and_explanation():
         service = mod.get_service()
         for intent in service["intents"]:
             result = service["generate_command"](intent, _sample_entities(intent))
-            assert isinstance(result, dict), f"{mod.__name__}:{intent} did not return a dict"
+            assert isinstance(
+                result, dict
+            ), f"{mod.__name__}:{intent} did not return a dict"
             assert "command" in result, f"{mod.__name__}:{intent} missing command"
-            assert "explanation" in result, f"{mod.__name__}:{intent} missing explanation"
+            assert (
+                "explanation" in result
+            ), f"{mod.__name__}:{intent} missing explanation"
 
 
 def test_registry_stores_class_based_parsers_as_objects():
@@ -92,4 +96,6 @@ def test_registry_stores_class_based_parsers_as_objects():
     for service_name, service in test_registry.services.items():
         if isinstance(service, dict):
             continue
-        assert isinstance(service, BaseParser), f"{service_name} should be stored as a parser object"
+        assert isinstance(
+            service, BaseParser
+        ), f"{service_name} should be stored as a parser object"

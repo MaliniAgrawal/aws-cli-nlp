@@ -21,7 +21,9 @@ class DynamoDBParser(BaseParser):
         return INTENTS
 
     def generate_command(self, intent: str, entities: Dict[str, Any]) -> Dict[str, str]:
-        region_flag = f" --region {entities['region']}" if entities.get("region") else ""
+        region_flag = (
+            f" --region {entities['region']}" if entities.get("region") else ""
+        )
 
         if intent == "create_dynamodb_table":
             table = entities.get("table", "MyTable")

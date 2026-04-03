@@ -84,8 +84,9 @@ class EC2Parser(BaseParser):
                     "command": "echo 'Specify one or more instance IDs (i-...) to start.'",
                     "explanation": "Missing instance IDs. Provide at least one instance ID (i-...).",
                 }
-            cmd = f"aws ec2 start-instances --instance-ids {' '.join(ids)}" + _make_region_flag(
-                region
+            cmd = (
+                f"aws ec2 start-instances --instance-ids {' '.join(ids)}"
+                + _make_region_flag(region)
             )
             return {
                 "command": cmd,
@@ -99,8 +100,9 @@ class EC2Parser(BaseParser):
                     "command": "echo 'Specify one or more instance IDs (i-...) to stop.'",
                     "explanation": "Missing instance IDs. Provide at least one instance ID (i-...).",
                 }
-            cmd = f"aws ec2 stop-instances --instance-ids {' '.join(ids)}" + _make_region_flag(
-                region
+            cmd = (
+                f"aws ec2 stop-instances --instance-ids {' '.join(ids)}"
+                + _make_region_flag(region)
             )
             return {
                 "command": cmd,
@@ -114,8 +116,9 @@ class EC2Parser(BaseParser):
                     "command": "echo 'Specify one or more instance IDs (i-...) to terminate.'",
                     "explanation": "Missing instance IDs. Provide at least one instance ID (i-...).",
                 }
-            cmd = f"aws ec2 terminate-instances --instance-ids {' '.join(ids)}" + _make_region_flag(
-                region
+            cmd = (
+                f"aws ec2 terminate-instances --instance-ids {' '.join(ids)}"
+                + _make_region_flag(region)
             )
             return {
                 "command": cmd,
@@ -185,9 +188,11 @@ def start_ec2_instance_handler(_args: dict, text: str) -> dict:
         **result,
         "intent": "start_ec2_instance",
         "entities": {"instance_ids": ids, "region": region},
-        "validation": _safe_validation_stub("start_ec2_instance", entities)
-        if ids
-        else {"status": "unknown", "reason": "missing_instance_id"},
+        "validation": (
+            _safe_validation_stub("start_ec2_instance", entities)
+            if ids
+            else {"status": "unknown", "reason": "missing_instance_id"}
+        ),
     }
 
 
@@ -200,9 +205,11 @@ def stop_ec2_instance_handler(_args: dict, text: str) -> dict:
         **result,
         "intent": "stop_ec2_instance",
         "entities": {"instance_ids": ids, "region": region},
-        "validation": _safe_validation_stub("stop_ec2_instance", entities)
-        if ids
-        else {"status": "unknown", "reason": "missing_instance_id"},
+        "validation": (
+            _safe_validation_stub("stop_ec2_instance", entities)
+            if ids
+            else {"status": "unknown", "reason": "missing_instance_id"}
+        ),
     }
 
 
@@ -215,9 +222,11 @@ def terminate_ec2_instance_handler(_args: dict, text: str) -> dict:
         **result,
         "intent": "terminate_ec2_instance",
         "entities": {"instance_ids": ids, "region": region},
-        "validation": _safe_validation_stub("terminate_ec2_instance", entities)
-        if ids
-        else {"status": "unknown", "reason": "missing_instance_id"},
+        "validation": (
+            _safe_validation_stub("terminate_ec2_instance", entities)
+            if ids
+            else {"status": "unknown", "reason": "missing_instance_id"}
+        ),
     }
 
 

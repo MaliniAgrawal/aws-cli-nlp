@@ -27,7 +27,10 @@ class SNSParser(BaseParser):
                 "explanation": f"Creates SNS topic '{topic}'.",
             }
         if intent == "list_sns_topics":
-            return {"command": "aws sns list-topics", "explanation": "Lists SNS topics."}
+            return {
+                "command": "aws sns list-topics",
+                "explanation": "Lists SNS topics.",
+            }
         return {
             "command": "echo 'Unsupported SNS intent'",
             "explanation": "Intent not supported",

@@ -27,7 +27,10 @@ class SQSParser(BaseParser):
                 "explanation": f"Creates SQS queue '{queue}'.",
             }
         if intent == "list_sqs_queues":
-            return {"command": "aws sqs list-queues", "explanation": "Lists SQS queues."}
+            return {
+                "command": "aws sqs list-queues",
+                "explanation": "Lists SQS queues.",
+            }
         return {
             "command": "echo 'Unsupported SQS intent'",
             "explanation": "Intent not supported",
