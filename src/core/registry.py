@@ -3,7 +3,7 @@ import inspect
 import logging
 import pkgutil
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from src.core.base_parser import BaseParser
 
@@ -14,12 +14,16 @@ PARSERS_PKG = "src.parsers"
 
 class ServiceRegistry:
     def __init__(self):
-        self.services: Dict[str, object] = {}
+        self.services: Dict[str, Union[BaseParser, dict]] = {}
         self.intent_to_service: Dict[str, str] = {}
 
-    def _register_service(self, svc: dict, source: str):
-        service_name = svc.get("name")
-        intents = svc.get("intents", [])
+    def _register_service(self, svc: Union[BaseParser, dict], source: str):
+        if isinstance(svc, BaseParser):
+            service_name = svc.get_service_name()
+            intents = svc.get_intents()
+        else:
+            service_name = svc.get("name")
+            intents = svc.get("intents", [])
         if not service_name or not intents:
             logger.warning("Skipping invalid plugin from %s", source)
             return
@@ -30,13 +34,18 @@ class ServiceRegistry:
         logger.info("Registered service plugin: %s (%s)", service_name, source)
 
     def _load_class_based_service(self, mod, parser_module: str) -> bool:
+        found = False
         for _, cls in inspect.getmembers(mod, inspect.isclass):
             if cls is BaseParser or not issubclass(cls, BaseParser):
                 continue
-            parser = cls()
-            self._register_service(parser.to_service_dict(), parser_module)
-            return True
-        return False
+            try:
+                parser = cls()
+            except Exception:
+                logger.exception("Failed to initialize parser %s", cls)
+                continue
+            self._register_service(parser, parser_module)
+            found = True
+        return found
 
     def autodiscover(self, package_name: str = PARSERS_PKG):
         """Dynamically discover and load service plugins from parsers directory."""
@@ -81,7 +90,7 @@ class ServiceRegistry:
     def get(self, service_name: str):
         return self.services.get(service_name)
 
-    def get_service_for_intent(self, intent: str) -> Optional[dict]:
+    def get_service_for_intent(self, intent: str) -> Optional[Union[BaseParser, dict]]:
         """Get service that handles the given intent."""
         service_name = self.intent_to_service.get(intent)
         if service_name:
